@@ -1,3 +1,3 @@
-#this script build 
-mdkdir dist
-cp -r public dist
+#this script build
+mkdir dist 
+cp -r public/* dist
