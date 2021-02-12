@@ -4,7 +4,8 @@
   "description": "maps delle piste ciclabili di milano",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/serve/bin/serve.js public"
+    "start": "./node_modules/serve/bin/serve.js public",
+    "build": "./build.sh"
   },
   "author": "Nicolo Valenza Mattia Salvadori",
   "license": "ISC",
