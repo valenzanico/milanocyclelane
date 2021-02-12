@@ -1,0 +1,14 @@
+{
+  "name": "milanocyclelane",
+  "version": "1.0.0",
+  "description": "maps delle piste ciclabili di milano",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/serve/bin/serve.js public"
+  },
+  "author": "Nicolo Valenza Mattia Salvadori",
+  "license": "ISC",
+  "dependencies": {
+    "serve": "^11.3.2"
+  }
+}
