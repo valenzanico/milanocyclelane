@@ -4,12 +4,13 @@
   "description": "maps delle piste ciclabili di milano",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/serve/bin/serve.js public",
-    "build": "./build.sh"
+    "start": "netlify dev",
+    "build": "sh ./build.sh"
   },
   "author": "Nicolo Valenza Mattia Salvadori",
   "license": "ISC",
   "dependencies": {
+    "node-fetch": "^2.6.1",
     "serve": "^11.3.2"
   }
 }
