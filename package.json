@@ -10,6 +10,7 @@
   "author": "Nicolo Valenza Mattia Salvadori",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.17.1",
     "node-fetch": "^2.6.1",
     "serve": "^11.3.2"
   }
