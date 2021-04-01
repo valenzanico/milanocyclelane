@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title></title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <script src='https://unpkg.com/mapillary-js@3.1.0/dist/mapillary.min.js'></script>
+    <link href='https://unpkg.com/mapillary-js@3.1.0/dist/mapillary.min.css' rel='stylesheet' />
+
+    <style>
+        html, body { margin: 0; padding: 0; height: 100%; }
+        #mly { height: 30%; width: 40%;}
+    </style>
+</head>
+
+<body>
+    <div id='mly'></div>
+
+    <script>
+        // Enable marker component when setting up viewer
+        var mly = new Mapillary.Viewer({
+            apiClient: 'QjI1NnU0aG5FZFZISE56U3R5aWN4Zzo3NTM1MjI5MmRjODZlMzc0',
+            component: {
+                cover: false,
+                marker: true,
+            },
+            container: 'mly',
+        });
+
+        // Create an yellow interactive simple marker and define all options
+        var interactiveMarker = new Mapillary.MarkerComponent.SimpleMarker(
+            'interactive-id',
+            { lat: 45.496784, lon:  9.190428 },
+            {
+                ballColor: '#000',
+                ballOpacity: 1,
+                color: 0xffff00,
+                opacity: 0.5,
+                interactive: true,
+                radius: 0.8,
+            });
+
+        // Create a non interactive simple marker with default options
+        var defaultMarker = new Mapillary.MarkerComponent.SimpleMarker(
+            'default-id',
+            { lat: 45.496784, lon: 9.190428 });
+        // Add markers to component
+        var markerComponent = mly.getComponent('marker');
+        markerComponent.add([interactiveMarker, defaultMarker]);
+
+        // Listen for marker changes
+        markerComponent.on(Mapillary.MarkerComponent.MarkerComponent.changed, function(e) {
+            console.log('Marker changed:', e.marker.id, e.marker.latLon);
+        });
+
+        mly.moveToKey('lR3SPfiSNhZ4hruS506bd5').catch(function(e) { console.error(e); });
+
+        // Viewer size is dynamic so resize should be called every time the window size changes
+        window.addEventListener("resize", function() { mly.resize(); });
+    </script>
+</body>
+</html>

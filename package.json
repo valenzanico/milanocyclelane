@@ -4,13 +4,16 @@
   "description": "maps delle piste ciclabili di milano",
   "main": "index.js",
   "scripts": {
-    "start": "netlify dev",
+    "backend": "/usr/bin/node backend/index.js",
+    "frontend": "/home/eagle/d/myapp/milanocyclelane/node_modules/serve/bin/serve.js public",
     "build": "sh ./build.sh"
   },
   "author": "Nicolo Valenza Mattia Salvadori",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
+    "geojson-path-finder": "^1.5.2",
     "node-fetch": "^2.6.1",
     "serve": "^11.3.2"
   }
