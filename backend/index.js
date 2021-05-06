@@ -10,7 +10,7 @@ app.get('/', async (req, res) => {
     let json_obj = await response.json()
   res.status(200).send(json_obj)
 });
-const PORT = 3000;
+const PORT = 80;
 
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`)
