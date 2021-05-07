@@ -27,12 +27,26 @@ let marker_state = {//oggetto globale in cui sono salvati i dati inierenti alla 
         coordinates:null,
         is_possible: false,
         type: null
-    } 
+    },
+    near_lane: {
+        marker: null,
+        coordinates: null,
+        is_used: false
+    }
 }
 
 
 var redIcon = new L.Icon({ //classe dell'icona della posizione from https://github.com/pointhi/leaflet-color-markers
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
+var orangeIcon = new L.Icon({ //classe dell'icona della posizione from https://github.com/pointhi/leaflet-color-markers
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
@@ -190,8 +204,10 @@ async function handle_destination_submit(event) {
 }
 
 async function getnear_coord() {
-    let coord = await getNear([parseFloat(marker_state.position.coordinates[1]), parseFloat(marker_state.position.coordinates[0])], geojson)
+    if (marker_state.position.is_possible) {
+        let coord = await getNear([parseFloat(marker_state.position.coordinates[1]), parseFloat(marker_state.position.coordinates[0])], geojson)
     managemapillaryviewer([parseFloat(marker_state.position.coordinates[1]), parseFloat(marker_state.position.coordinates[0])],coord)
+    }
 }
 
 async function manage_menu() {
@@ -447,7 +463,7 @@ function get_near_cyclable(mygeojson) {
         geojson = mygeojson;
     root.innerHTML += `<div id="near_cycle" class="near_cycle">
     
-    <button onclick="getnear_coord()">visualizza ciclbile più vicina</button></div>`
+    <button onclick="getnear_coord()">visualizza ciclabile più vicina</button></div>`
     }
 }
 
@@ -625,11 +641,17 @@ function movetopoint(position, lane) {
     })
 }
 function showViewer(position_coord, lane_coord) {
+    marker_state.near_lane.coordinates = [lane_coord[1].toString(), lane_coord[0].toString()]
+    marker_state.near_lane.marker = L.marker(marker_state.near_lane.coordinates, {icon: orangeIcon}).addTo(leaflet_map);
+    marker_state.near_lane.marker.bindPopup(`<b>ciclabile più vicina</b>`)
+    marker_state.near_lane.is_used = true
+    leaflet_map.setView(marker_state.near_lane.coordinates, 25)
     document.querySelector("#mly").removeAttribute("class")
     document.querySelector("#mly").setAttribute("class", "mly")
     initMapillary();
     addMarker(position_coord, lane_coord);
     movetopoint(position_coord, lane_coord);
+    mly.resize();
     window.addEventListener('resize', function() { mly.resize(); });
     
 }
@@ -638,16 +660,22 @@ function hideViewer() {
     mly.remove();
     document.querySelector("#mly").removeAttribute("class")
     document.querySelector("#mly").setAttribute("class", "mly-hidden")
+    marker_state.near_lane.coordinates = null;
+    leaflet_map.removeLayer(marker_state.near_lane.marker);
+    marker_state.near_lane.marker = null;
+    leaflet_map.setView([45.4773, 9.1815], 12);
+    marker_state.near_lane.is_used = false
 }
 function managemapillaryviewer(position_coord, lane_coord) {
     if (hideorshowmapillary===1) {
         hideViewer();
         hideorshowmapillary = 0;
-
+        document.querySelector("#near_cycle > button").innerText = "visualizza ciclabile più vicina"
     }
     else {
         showViewer(position_coord, lane_coord);
         hideorshowmapillary = 1
+        document.querySelector("#near_cycle > button").innerText = "nascondi ciclabile più vicina"
     }
 }
 
@@ -657,6 +685,34 @@ async function add_graphic_element() {
     <label class="menu-button" onclick="manage_menu()">&#9776;</label>
     `
 }
+
+
+async function start_whatchposition() {
+    let success = position => {
+        let current_pos = position.coords;
+        marker_state.position.coordinates = [current_pos.latitude.toString(), current_pos.longitude.toString()];
+        leaflet_map.removeLayer(marker_state.position.marker);
+        marker_state.position.marker = null;
+        marker_state.position.marker = L.marker(marker_state.position.coordinates, {icon: redIcon}).addTo(leaflet_map);
+        marker_state.position.marker.bindPopup(`<b>la tua posizione</b>`)
+        marker_state.position.is_possible = true;
+        console.log("update pos");
+      }
+      
+      let error = () => {
+        console.error('Sorry, no position available.');
+        marker_state.position.is_possible = false;
+      }
+      
+      const options = {
+        enableHighAccuracy: true,
+        maximumAge: 30000,
+        timeout: 27000
+      };
+      
+      navigator.geolocation.watchPosition(success, error, options);
+          
+}
 //funzione main
 //questa funzione richiama tutte le altre
 //si occupa di:
@@ -665,7 +721,14 @@ async function add_graphic_element() {
 // -richiedere la posizione gps corrente alle api
 async function main() {
     onLoad();
-    root.querySelector("#loading").innerText = "caricamento";
+    root.querySelector("#loading").innerHTML = `
+    <?xml version="1.0" encoding="utf-8"?>
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="loader" style="margin: auto; background: none; display: block; shape-rendering: auto;" width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+    <path d="M28 50A22 22 0 0 0 72 50A22 22.8 0 0 1 28 50" fill="#36013f" stroke="none">
+      <animateTransform attributeName="transform" type="rotate" dur="1s" repeatCount="indefinite" keyTimes="0;1" values="0 50 50.4;360 50 50.4"></animateTransform>
+    </path>
+    <!-- [ldio] generated by https://loading.io/ --></svg>
+    `;
     let l_geojson = await getapi();
     let map_container = document.createElement("div");
     map_container.id = "leaflet-map";
@@ -678,6 +741,7 @@ async function main() {
         marker_state.position.coordinates = [current_pos.latitude.toString(), current_pos.longitude.toString()]
         marker_state.position.marker = L.marker(marker_state.position.coordinates, {icon: redIcon}).addTo(leaflet_map);
         marker_state.position.marker.bindPopup(`<b>la tua posizione</b>`)
+        start_whatchposition();
     }
     add_graphic_element();
     search();

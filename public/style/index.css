@@ -7,6 +7,14 @@
        bottom: 0;
        z-index: 1;
      }
+
+.loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+}
 .menu-close {
     visibility: hidden;
     position: absolute;
@@ -20,7 +28,13 @@
     height: 100%;
     width: 100%;
 }
-.mly { position: absolute; height: 500px; width: 500px; }
+.mly { 
+    position: absolute !important;
+    height: 36%;
+      width: 100%;
+      z-index: 1;
+      bottom: 0;
+     }
 .mly-hidden {
     visibility: hidden;
     position: absolute;
