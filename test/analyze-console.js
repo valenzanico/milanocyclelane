@@ -11,7 +11,7 @@ function sleep(ms) {
 
 //milano (x, y) (9, 45)
 const getjson = () => {
-    let json_obj = JSON.parse(fs.readFileSync('./data/bike_ciclabili.geojson', 'utf8'));
+    let json_obj = JSON.parse(fs.readFileSync('../data/bike_ciclabili.geojson', 'utf8'));
     return json_obj
 }
 const jsontor = getjson()
