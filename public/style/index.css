@@ -1,3 +1,44 @@
-#leaflet-map {
-    height: 500px;
+#leaflet-map { 
+    position: absolute;
+     width: 100%;
+     height: 100%;
+      top: 0;
+       right: 0;
+       bottom: 0;
+       z-index: 1;
+     }
+.menu-close {
+    visibility: hidden;
+    position: absolute;
+    z-index: 0;
 }
+.menu-open {
+    visibility: visible;
+    position: absolute;
+    background-color: rgba(65, 50, 50, 0.705);
+    z-index: 2;
+    height: 100%;
+    width: 100%;
+}
+.mly { position: absolute; height: 500px; width: 500px; }
+.mly-hidden {
+    visibility: hidden;
+    position: absolute;
+ }
+
+ body { margin:0; padding:0; height: max-content; width: max-content }
+
+ .menu-button {
+     z-index: 3;
+     position: absolute;
+     font-size: 30px;
+     top: 78px;
+     left: 13px;
+ }
+
+ .near_cycle {
+     margin-left: 30%;
+ }
+ .search {
+     margin-left: 30%;
+ }

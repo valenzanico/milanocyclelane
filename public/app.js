@@ -1,12 +1,17 @@
 //variabili
-const API = "http://localhost:3000";
-let root = document.querySelector("#root");
+const API = "https://milanocyclelane.herokuapp.com/"; //api endpoint
+let root = document.querySelector("#root");//html node 
 let body = document.body;
-let search_result;
+let search_result;//variabili globali
 let leaflet_map;
 let load_second;
 let route;
-let marker_state = {
+let geojson;
+let mly;
+let markerComponent;
+let hideorshowmapillary = 0;
+let menu_state = 0;
+let marker_state = {//oggetto globale in cui sono salvati i dati inierenti alla posizione
     destination: {
         marker: null,
         search_result: null,
@@ -26,7 +31,7 @@ let marker_state = {
 }
 
 
-var redIcon = new L.Icon({
+var redIcon = new L.Icon({ //classe dell'icona della posizione from https://github.com/pointhi/leaflet-color-markers
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
     iconSize: [25, 41],
@@ -38,8 +43,10 @@ var redIcon = new L.Icon({
 
 
 //fuznioni chiamate dal dom
-//qua si trovano le funzioni chiamte associate a un'evento
-function remove_marker(type) {
+//qua si trovano le funzioni chiamate associate a un'evento
+
+
+function remove_marker(type) {//questa funzione rimuove i marker e richiama il cilo della ricerca
     if (marker_state.position.marker ==null && marker_state.position.is_possible ==true && marker_state.position.coordinates !=null && marker_state.position.type==type) {
         marker_state.position.marker = L.marker(marker_state.position.coordinates, {icon: redIcon}).addTo(leaflet_map);
         marker_state.position.marker.bindPopup(`<b>la tua posizione</b>`)
@@ -182,6 +189,21 @@ async function handle_destination_submit(event) {
 }}
 }
 
+async function getnear_coord() {
+    let coord = await getNear([parseFloat(marker_state.position.coordinates[1]), parseFloat(marker_state.position.coordinates[0])], geojson)
+    managemapillaryviewer([parseFloat(marker_state.position.coordinates[1]), parseFloat(marker_state.position.coordinates[0])],coord)
+}
+
+async function manage_menu() {
+    if (menu_state===0) {
+        document.querySelector("#root").setAttribute("class", "menu-open")
+        menu_state = 1
+    } else {
+        document.querySelector("#root").setAttribute("class", "menu-close")
+        menu_state = 0
+    }
+}
+
 //funzioni richimate da altre funzioni
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -307,7 +329,9 @@ function get_user_position() {
       navigator.geolocation.getCurrentPosition(success, fail);
     });
 }
-
+//questa funzione inserice la view html della ricerca
+//inizializza le variabili
+//viene chiamata ogni volta 
 async function search() { // search funxtion per gestione html
     let pos_list_el = t => {
         if (marker_state.position.coordinates) {
@@ -324,7 +348,7 @@ async function search() { // search funxtion per gestione html
     }
     let old_html_div = document.getElementById("search")
     if (!old_html_div) {
-        root.innerHTML += `<div id="search"></div>`
+        root.innerHTML += `<div id="search" class="search"></div>`
     }
     
     let start_point =()=>{
@@ -417,19 +441,237 @@ async function search() { // search funxtion per gestione html
 
 }
 
+//questa funzione inserisce la view html e il pulsante per richimare la ricerca della cilclabile più vicibna
+function get_near_cyclable(mygeojson) {
+    if (marker_state.position.is_possible) {
+        geojson = mygeojson;
+    root.innerHTML += `<div id="near_cycle" class="near_cycle">
+    
+    <button onclick="getnear_coord()">visualizza ciclbile più vicina</button></div>`
+    }
+}
 
+async function getNear(mycord, json_obj){
+
+    let final_l = []
+    
+
+let list = json_obj.features.map((item, index)=>{
+    return {
+        id: item.properties.id_amat,
+        coordinates: item.geometry.coordinates,
+        
+    }
+
+})
+list.map((item, index)=> {
+    item.coordinates[0].map((item, index)=>{
+        final_l.push(item)
+    })
+})
+  final_l2 = final_l.map((item, index)=>{
+      let lon_d = Math.abs(item[0]-mycord[0])
+      let lat_d = Math.abs(item[1]-mycord[1])
+      return lon_d + lat_d
+  })
+  let corrindex = final_l2.indexOf(Array.min(final_l2))
+  let coordinate;
+  final_l.map((item, index)=>{
+      if (index===corrindex) {
+          coordinate = item
+      }
+  })
+  let toreturn = [];
+  let coorit;
+  list.map((item, oindex)=> {
+      if (item.coordinates){
+        let listint = item.coordinates[0]
+        listint.map((nitem, index)=> {
+            if (nitem === coordinate) {
+                if (index-1!== -1) {
+                    toreturn.push(listint[index-1]);
+                }
+                toreturn.push(listint[index]);
+                if (listint.length-1 !== index) {
+                toreturn.push(listint[index+1]);
+                }
+                coorit = json_obj.features[oindex]
+            }
+        })
+      }
+      
+  })
+  if (toreturn.length>2){ 
+  toreturn.map((item, index)=>{
+      if (item=== coordinate) {
+          if (index===0) {
+              toreturn = toreturn
+          }
+          else if (index===1) {
+            let d1 = Math.abs(toreturn[0][0]-mycord[0]) + Math.abs(toreturn[0][1]-mycord[1])
+            let d2 = Math.abs(toreturn[2][0]-mycord[0]) + Math.abs(toreturn[2][1]-mycord[1])
+            if (d1<=d2) {
+                toreturn.splice(2,1)
+            }
+            else if (d2<d1) {
+                toreturn.splice(0,1)
+            }
+          } 
+          else if (index===2) {
+              toreturn = toreturn
+          }
+      }
+  })}
+  else {
+      toreturn=toreturn
+  }
+  let x_a = toreturn[0][0]
+  let y_a = toreturn[0][1]
+  let x_b = toreturn[1][0] 
+  let y_b = toreturn[1][1]
+  let x_d = x_b - x_a
+  let y_d = y_b - y_a
+  let coe = y_d / x_d
+  let new_point = []
+  let x_c =x_a
+  let y_c
+  let n_push = parseInt(Math.abs(x_d / 0.0002))
+  for (let n=1; n<=n_push-1; n++) {
+  if (x_a < x_b) {// x_a < x_c < x_b
+    x_c = x_c + 0.0002
+  } 
+  else if (x_a > x_b) {
+      x_c = x_c + (-1 *0.0002)
+  }
+  else if (x_a=== x_b) {
+      x_c = null
+  }
+  if (x_c) {
+      y_c = coe*(x_c- x_a) + y_a
+  }
+  new_point.push([x_c, y_c])
+}
+new_point = new_point.concat(toreturn)
+  let new_point2 = new_point.map((item, index)=>{
+    let x_dif = Math.abs(item[0]-mycord[0])
+    let y_dif = Math.abs(item[1]-mycord[1])
+    return x_dif + y_dif
+  })
+
+  let nearcoord_ind = new_point2.indexOf(Array.min(new_point2))
+  let nearcoord = new_point[nearcoord_ind]
+  let result_dict = {
+      coord: toreturn,
+      ite: coorit,
+      cc: coordinate,
+      xy_distanza: {
+          x_d: x_d,
+          y_d: y_d,
+          m: coe,
+          x_a: x_a,
+          y_a: y_a,
+          x_b: x_b,
+          y_b: y_b,
+          xy_c: new_point,
+          npush: n_push,
+          risultato: nearcoord
+      }
+  };
+  return result_dict.xy_distanza.risultato
+
+}
+
+
+function initMapillary() {
+    mly = new Mapillary.Viewer({
+    apiClient: 'QjI1NnU0aG5FZFZISE56U3R5aWN4Zzo3NTM1MjI5MmRjODZlMzc0',
+    component: {
+        cover: false,
+        marker: true,
+    },
+    container: 'mly',
+});
+}
+
+function addMarker(position, lane) {
+    markerComponent = mly.getComponent('marker');
+    var interactiveMarker = new Mapillary.MarkerComponent.SimpleMarker(
+    'position-id',
+    { lat: position[1], lon:  position[0] },
+    {
+        ballColor: '#000',
+        ballOpacity: 1,
+        color: 0xffff00,
+        opacity: 0.5,
+    });
+
+// Create a non interactive simple marker with default options
+var defaultMarker = new Mapillary.MarkerComponent.SimpleMarker(
+    'lane-id',
+    { lat: lane[1], lon: lane[0] });
+markerComponent.add([interactiveMarker]);
+markerComponent.add([defaultMarker]);
+} 
+
+
+
+function movetopoint(position, lane) {
+    let keytomove;
+    fetch(`https://a.mapillary.com/v3/images?client_id=aHltWFR4Njk0MmR5RHlxMHVrajM0Yzo0NmNmN2QyZGU4ZTliODMz&closeto=${position[0]},${position[1]}&lookat=${lane[0]},${lane[1]}`)
+    .then(data=>data.json())
+    .then(json=> {
+        keytomove = json["features"][0]["properties"]["key"]
+        mly.moveToKey(keytomove).catch(function(e) { console.error(e); });
+    })
+}
+function showViewer(position_coord, lane_coord) {
+    document.querySelector("#mly").removeAttribute("class")
+    document.querySelector("#mly").setAttribute("class", "mly")
+    initMapillary();
+    addMarker(position_coord, lane_coord);
+    movetopoint(position_coord, lane_coord);
+    window.addEventListener('resize', function() { mly.resize(); });
+    
+}
+function hideViewer() {
+    markerComponent.removeAll();
+    mly.remove();
+    document.querySelector("#mly").removeAttribute("class")
+    document.querySelector("#mly").setAttribute("class", "mly-hidden")
+}
+function managemapillaryviewer(position_coord, lane_coord) {
+    if (hideorshowmapillary===1) {
+        hideViewer();
+        hideorshowmapillary = 0;
+
+    }
+    else {
+        showViewer(position_coord, lane_coord);
+        hideorshowmapillary = 1
+    }
+}
+
+
+async function add_graphic_element() {
+    document.querySelector("#graph-root").innerHTML += `
+    <label class="menu-button" onclick="manage_menu()">&#9776;</label>
+    `
+}
 //funzione main
+//questa funzione richiama tutte le altre
+//si occupa di:
+// -scaricare il file geojson dalle api e inserirlo nella mappa leaflet
+// -agiungere la mappa all dom
+// -richiedere la posizione gps corrente alle api
 async function main() {
     onLoad();
-    
-    let h1tag = root.querySelector("#loading");
-    h1tag.innerText = "caricamento";
-    let geojson = await getapi();
+    root.querySelector("#loading").innerText = "caricamento";
+    let l_geojson = await getapi();
     let map_container = document.createElement("div");
     map_container.id = "leaflet-map";
     body.insertBefore(map_container, root)
     leaflet_map = insert_leaflet_map();
-    L.geoJSON(geojson).addTo(leaflet_map)
+    L.geoJSON(l_geojson).addTo(leaflet_map)
     let current_pos = await get_user_position();
     if (!current_pos.error) {
         marker_state.position.is_possible = true
@@ -437,9 +679,11 @@ async function main() {
         marker_state.position.marker = L.marker(marker_state.position.coordinates, {icon: redIcon}).addTo(leaflet_map);
         marker_state.position.marker.bindPopup(`<b>la tua posizione</b>`)
     }
+    add_graphic_element();
     search();
-    h1tag.innerText = "finito";
+    get_near_cyclable(l_geojson);   
+    console.log("ciao")
+    root.querySelector("#loading").remove()
+    
 }
-
 main();
-

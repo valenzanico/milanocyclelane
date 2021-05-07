@@ -10,16 +10,31 @@
 
     <style>
         html, body { margin: 0; padding: 0; height: 100%; }
-        #mly { height: 30%; width: 40%;}
+        .mly { height: 30%; width: 40%;}
+        .mly-hidden {
+            visibility: hidden;
+            position: absolute;
+        }
+        
     </style>
 </head>
 
 <body>
-    <div id='mly'></div>
+    <div id='mly' class="mly mly-hidden"></div>
+    <button onclick="managebuttonshowmapillary()">show or hide</button>
 
     <script>
-        // Enable marker component when setting up viewer
-        var mly = new Mapillary.Viewer({
+        let position_coord = [9.162780099999999, 45.5076738]
+        let lane_coord = [9.162391963789368, 45.50834513813253]
+
+
+        let mly;
+        let markerComponent;
+        let hideorshowmapillary = 0;
+        
+
+        function initMapillary() {
+            mly = new Mapillary.Viewer({
             apiClient: 'QjI1NnU0aG5FZFZISE56U3R5aWN4Zzo3NTM1MjI5MmRjODZlMzc0',
             component: {
                 cover: false,
@@ -27,37 +42,70 @@
             },
             container: 'mly',
         });
+        }
 
-        // Create an yellow interactive simple marker and define all options
-        var interactiveMarker = new Mapillary.MarkerComponent.SimpleMarker(
-            'interactive-id',
-            { lat: 45.496784, lon:  9.190428 },
+        function addMarker(position, lane) {
+            markerComponent = mly.getComponent('marker');
+            var interactiveMarker = new Mapillary.MarkerComponent.SimpleMarker(
+            'position-id',
+            { lat: position[1], lon:  position[0] },
             {
                 ballColor: '#000',
                 ballOpacity: 1,
                 color: 0xffff00,
                 opacity: 0.5,
-                interactive: true,
-                radius: 0.8,
             });
 
         // Create a non interactive simple marker with default options
         var defaultMarker = new Mapillary.MarkerComponent.SimpleMarker(
-            'default-id',
-            { lat: 45.496784, lon: 9.190428 });
-        // Add markers to component
-        var markerComponent = mly.getComponent('marker');
-        markerComponent.add([interactiveMarker, defaultMarker]);
+            'lane-id',
+            { lat: lane[1], lon: lane[0] });
+        markerComponent.add([interactiveMarker]);
+        markerComponent.add([defaultMarker]);
+        } 
 
-        // Listen for marker changes
-        markerComponent.on(Mapillary.MarkerComponent.MarkerComponent.changed, function(e) {
-            console.log('Marker changed:', e.marker.id, e.marker.latLon);
-        });
+        
 
-        mly.moveToKey('lR3SPfiSNhZ4hruS506bd5').catch(function(e) { console.error(e); });
+        function movetopoint(position, lane) {
+            let keytomove;
+            fetch(`https://a.mapillary.com/v3/images?client_id=aHltWFR4Njk0MmR5RHlxMHVrajM0Yzo0NmNmN2QyZGU4ZTliODMz&closeto=${position[0]},${position[1]}&lookat=${lane[0]},${lane[1]}`)
+            .then(data=>data.json())
+            .then(json=> {
+                keytomove = json["features"][0]["properties"]["key"]
+                mly.moveToKey(keytomove).catch(function(e) { console.error(e); });
+            })
+        }
+        function showViewer(position_coord, lane_coord) {
+            document.querySelector("#mly").removeAttribute("class")
+            document.querySelector("#mly").setAttribute("class", "mly")
+            initMapillary();
+            addMarker(position_coord, lane_coord);
+            movetopoint(position_coord, lane_coord);
+            
+        }
+        function hideViewer() {
+            markerComponent.removeAll();
+            mly.remove();
+            document.querySelector("#mly").removeAttribute("class")
+            document.querySelector("#mly").setAttribute("class", "mly-hidden")
+        }
+        function managemapillaryviewer() {
+            if (hideorshowmapillary===1) {
+                hideViewer();
+                hideorshowmapillary = 0;
+
+            }
+            else {
+                showViewer(position_coord, lane_coord);
+                hideorshowmapillary = 1
+            }
+        }
+        function managebuttonshowmapillary() {
+            managemapillaryviewer()
+        }
 
         // Viewer size is dynamic so resize should be called every time the window size changes
-        window.addEventListener("resize", function() { mly.resize(); });
+        
     </script>
 </body>
 </html>

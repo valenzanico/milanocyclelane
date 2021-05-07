@@ -7,16 +7,23 @@
     <link rel="stylesheet" href="./style/index.css">
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="./dist/leaflet-routing-machine.js"></script>
-    <script src="./dist/external.js"></script>
+    <script src="./config.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="./dist/leaflet-routing-machine.css" />
+    <script src='https://unpkg.com/mapillary-js@3.1.0/dist/mapillary.min.js'></script>
+    <link href='https://unpkg.com/mapillary-js@3.1.0/dist/mapillary.min.css' rel='stylesheet' />
 
     
 </head>
 <body>
     <div id="root">
         <h1 id="loading"></h1>
+        
     </div>
+    <div id="graph-root">
+
+    </div>
+    <div id='mly' class="mly mly-hidden"></div>
     <script src="./app.js"></script>
 </body>
 </html>

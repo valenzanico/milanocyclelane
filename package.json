@@ -6,6 +6,7 @@
   "scripts": {
     "backend": "/usr/bin/node backend/index.js",
     "frontend": "/home/eagle/d/myapp/milanocyclelane/node_modules/serve/bin/serve.js public",
+    "teststreetview": "/home/eagle/d/myapp/milanocyclelane/node_modules/serve/bin/serve.js data",
     "build": "sh ./build.sh"
   },
   "author": "Nicolo Valenza Mattia Salvadori",
