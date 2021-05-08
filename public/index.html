@@ -3,25 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>milanocyclelane</title>
-    <link rel="stylesheet" href="./style/index.css">
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <title>Milanocyclelane</title>
+    <script src="./dist/leaflet/leaflet.js"></script>
+    <link rel="stylesheet" href="./dist/leaflet/leaflet.css" />
     <script src="./dist/leaflet-routing-machine.js"></script>
-    <script src="./config.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="./dist/leaflet-routing-machine.css" />
-    <script src='https://unpkg.com/mapillary-js@3.1.0/dist/mapillary.min.js'></script>
-    <link href='https://unpkg.com/mapillary-js@3.1.0/dist/mapillary.min.css' rel='stylesheet' />
-
-    
+    <script src='./dist/mapillary/mapillary.min.js'></script>
+    <link href='./dist/mapillary/mapillary.min.css' rel='stylesheet' />
+    <link rel="stylesheet" href="./style/index.css">
+    <script src="./config.js"></script>
+    <link rel="manifest" href="./manifest.json" />
+    <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js');
+          });
+        }
+    </script>
 </head>
 <body>
     <div id="root">
         <h1 id="loading"></h1>
-        
     </div>
     <div id="graph-root">
-
     </div>
     <div id='mly' class="mly mly-hidden"></div>
     <script src="./app.js"></script>

@@ -15,6 +15,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "geojson-path-finder": "^1.5.2",
+    "mapillary-js": "^3.1.0",
     "node-fetch": "^2.6.1",
     "serve": "^11.3.2"
   }
