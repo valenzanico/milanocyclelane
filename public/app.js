@@ -102,7 +102,9 @@ function on_get_place_start(placeid) {
                 return
             }
             if (leaflet_map) {
-                marker_state.start.marker = L.marker([item.latitude, item.longitude]).addTo(leaflet_map);
+                let start_marker = L.marker([item.latitude, item.longitude])
+                start_marker.setZIndexOffset(3)
+                marker_state.start.marker = start_marker.addTo(leaflet_map);
                 marker_state.start.marker.bindPopup(`<b align="center">partenza</b><br /><button align="center" onclick="remove_marker('start')">rimuovi</button>`)
             }
             marker_state.start.coordinates = [item.latitude, item.longitude];
@@ -122,7 +124,9 @@ function on_get_place_destination(placeid) {
                 return
             }
             if (leaflet_map) {
-                marker_state.destination.marker = L.marker([item.latitude, item.longitude]).addTo(leaflet_map);
+                let destination_marker = L.marker([item.latitude, item.longitude])
+                destination_marker.setZIndexOffset(3)
+                marker_state.destination.marker = destination_marker.addTo(leaflet_map);
                 marker_state.destination.marker.bindPopup(`<b>destinazione</b><br /><button onclick="remove_marker('destination')">rimuovi</button>`)
             };
             marker_state.destination.coordinates = [item.latitude, item.longitude];
@@ -142,7 +146,9 @@ function on_get_place_pos(type) {
             leaflet_map.removeLayer(marker_state.position.marker);
             marker_state.position.marker=null;
             marker_state.position.type=type;
-            marker_state.start.marker = L.marker(pos_coordinates).addTo(leaflet_map);
+            let start_marker = L.marker(pos_coordinates)
+            start_marker.setZIndexOffset(3)
+            marker_state.start.marker = start_marker.addTo(leaflet_map);
             marker_state.start.marker.bindPopup(`<b>partenza</b><br /><button onclick="remove_marker('start')">rimuovi</button>`)
         };
         marker_state.start.coordinates = marker_state.position.coordinates
@@ -155,7 +161,9 @@ function on_get_place_pos(type) {
             leaflet_map.removeLayer(marker_state.position.marker);
             marker_state.position.marker=null;
             marker_state.position.type=type;
-            marker_state.destination.marker = L.marker(pos_coordinates).addTo(leaflet_map);
+            let destination_marker = L.marker(pos_coordinates)
+            destination_marker.setZIndexOffset(3)
+            marker_state.destination.marker = destination_marker.addTo(leaflet_map);
             marker_state.destination.marker.bindPopup(`<b>destinazione</b><br /><button onclick="remove_marker('destination')">rimuovi</button>`)
         };
         marker_state.destination.coordinates = marker_state.position.coordinates
@@ -261,7 +269,7 @@ function insert_leaflet_map() {
 }
 
 async function search_api(query) { //funzione per gestione api ricerca openstreetmap
-    let json = await fetch(`https://nominatim.openstreetmap.org/search.php?q=${query}&format=jsonv2`)
+    let json = await fetch(`https://nominatim.openstreetmap.org/search.php?q=${query}, Milano&format=jsonv2`)
     .then(data=>data.json())
     let result_array = json.map((item,index)=>{
         return {
@@ -690,13 +698,22 @@ async function add_graphic_element() {
 async function start_whatchposition() {
     let success = position => {
         let current_pos = position.coords;
-        marker_state.position.coordinates = [current_pos.latitude.toString(), current_pos.longitude.toString()];
-        leaflet_map.removeLayer(marker_state.position.marker);
-        marker_state.position.marker = null;
-        marker_state.position.marker = L.marker(marker_state.position.coordinates, {icon: redIcon}).addTo(leaflet_map);
-        marker_state.position.marker.bindPopup(`<b>la tua posizione</b>`)
-        marker_state.position.is_possible = true;
-        console.log("update pos");
+        if (marker_state.position.marker) {
+            marker_state.position.coordinates = [current_pos.latitude.toString(), current_pos.longitude.toString()];
+            leaflet_map.removeLayer(marker_state.position.marker);
+            marker_state.position.marker = null;
+            marker_state.position.marker = L.marker(marker_state.position.coordinates, {icon: redIcon}).addTo(leaflet_map);
+            marker_state.position.marker.bindPopup(`<b>la tua posizione</b>`)
+            marker_state.position.is_possible = true;
+            console.log("update pos");
+        } else {
+            marker_state.position.coordinates = [current_pos.latitude.toString(), current_pos.longitude.toString()];
+            marker_state.position.marker = null;
+            marker_state.position.marker = L.marker(marker_state.position.coordinates, {icon: redIcon}).addTo(leaflet_map);
+            marker_state.position.marker.bindPopup(`<b>la tua posizione</b>`)
+            marker_state.position.is_possible = true;
+            console.log("create pos");
+        }
       }
       
       let error = () => {
