@@ -19,14 +19,16 @@
     visibility: hidden;
     position: absolute;
     z-index: 0;
+    background-color: rgb(255 255 255 / 66%);
 }
 .menu-open {
     visibility: visible;
     position: absolute;
-    background-color: rgba(65, 50, 50, 0.705);
+    background-color: rgb(255 255 255 / 66%);
     z-index: 5;
     height: 100%;
     width: 100%;
+
 }
 .mly { 
     position: absolute !important;
@@ -40,19 +42,57 @@
     position: absolute;
  }
 
- body { margin:0; padding:0; height: max-content; width: max-content }
+ body {
+    margin:0;
+    padding:0;
+    height: max-content; 
+    width: max-content;
+    font-family: 'Montserrat', sans-serif;
+}
 
  .menu-button {
-     z-index: 6;
-     position: absolute;
-     font-size: 30px;
-     top: 78px;
-     left: 13px;
+    z-index: 6;
+    position: absolute;
+    font-size: 30px;
+    top: 80px;
+    left: -4px;
  }
-
+.menu-button-icon {
+    width: 60px;
+    cursor: pointer;
+}
  .near_cycle {
-     margin-left: 30%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
  }
  .search {
-     margin-left: 30%;
+    left: 50%;
+    transform: translate(-50%, -110%);
+    top: 50%;
+    position: absolute;
+    text-decoration: none;
+ }
+ button {
+     
+ }
+ #search-form1 >  h4 {
+    text-align: center;
+ }
+ #search-form2 > h4 {
+    text-align: center;
+ }
+ .footer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 130%);
+ }
+ .footer > a{
+     text-decoration: underline;
+     margin: 20px;
+ }
+ a {
+     text-decoration: none;
  }

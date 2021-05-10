@@ -4,9 +4,49 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="manifest" href="./manifest.json" />
     <title>Installa l'app - Milanocyclelane</title>
+    <style>
+        body {
+            margin:0;
+    padding:0;
+    height: max-content; 
+    width: max-content;
+    font-family: 'Montserrat', sans-serif;
+        }
+        .install {
+            left: 50%;
+    transform: translate(-50%, -110%);
+    top: 50%;
+    position: absolute;
+        }
+        .install > h4 {
+            text-align: center;
+       
+        }
+        .install > button {
+            margin-left: 63px;
+        }
+    </style>
 </head>
 <body>
-    <button>Installa</button>
+    <div class="install">
+        <h4>Installa l'applicazione</h4>
+        <button id="install-button" onclick="install()">Installa</button>
+    </div>
+    <pwa-install
+    usecustom="true"
+    installbuttontext="Installa"
+    cancelbuttontext="Annulla"
+    iosinstallinfotext="Clicca sul pulsante condividi e sucessivamnte su aggiungi alla schermata home"
+    ></pwa-install>
+    <script>
+        function install() {
+            document.querySelector("pwa-install").openPrompt()
+        }
+    </script>
 </body>
 </html>

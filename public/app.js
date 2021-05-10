@@ -690,7 +690,7 @@ function managemapillaryviewer(position_coord, lane_coord) {
 
 async function add_graphic_element() {
     document.querySelector("#graph-root").innerHTML += `
-    <label class="menu-button" onclick="manage_menu()">&#9776;</label>
+    <label class="menu-button" onclick="manage_menu()"><img class="menu-button-icon" src="/images/dropdownmenubutton.svg" alt="MENU"></img></label>
     `
 }
 
@@ -730,6 +730,14 @@ async function start_whatchposition() {
       navigator.geolocation.watchPosition(success, error, options);
           
 }
+async function append_footer() {
+    document.querySelector("#root").innerHTML += `
+    <div class="footer">
+    <a href="/info">Info</a>
+    <a href="/install">Install</a>
+    </div>
+    `
+}
 //funzione main
 //questa funzione richiama tutte le altre
 //si occupa di:
@@ -763,7 +771,7 @@ async function main() {
     add_graphic_element();
     search();
     get_near_cyclable(l_geojson);   
-    console.log("ciao")
+    append_footer();
     root.querySelector("#loading").remove()
     
 }
