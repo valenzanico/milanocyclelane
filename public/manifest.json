@@ -30,7 +30,7 @@
     "related_applications": [
         {
           "platform": "webapp",
-          "url": "https://milanocyclelane.algorithm-net.com/"
+          "url": "https://milanocyclelane.algorithm-net.com/manifest.json"
         }
     ],
     "scope": "/",
