@@ -37,10 +37,13 @@
         .install > button {
             margin-left: 63px;
         }
+        .hidden {
+            visibility: hidden;
+        }
     </style>
 </head>
 <body>
-    <div class="install">
+    <div id="install-div" class="install">
         <h4>Installa l'applicazione</h4>
         <button id="install-button" onclick="install()">Installa</button>
     </div>
@@ -54,6 +57,10 @@
     <script>
         function install() {
             document.querySelector("pwa-install").openPrompt()
+        }
+        if (document.querySelector("pwa-install").getInstalledStatus()) {
+            document.querySelector("#install-button").setAttribute("class", "hidden");
+            document.querySelector("#install-div").innerHTML += `<h5>L'app è già stata installata</h5>`
         }
     </script>
 </body>
