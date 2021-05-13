@@ -58,7 +58,8 @@
         function install() {
             document.querySelector("pwa-install").openPrompt()
         }
-        if (document.querySelector("pwa-install").getInstalledStatus()) {
+        let installedStatus = document.querySelector("pwa-install").getInstalledStatus()
+        if (installedStatus) {
             document.querySelector("#install-button").setAttribute("class", "hidden");
             document.querySelector("#install-div").innerHTML += `<h5>L'app è già stata installata</h5>`
         }
