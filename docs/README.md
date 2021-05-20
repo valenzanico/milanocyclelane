@@ -2,13 +2,25 @@
 
 ## Realizzazione
 
+## il sito
+
+![](/home/eagle/d/myapp/milanocyclelane/docs/img1-leggenda.png)
+
+![](/home/eagle/d/myapp/milanocyclelane/docs/img2-leggenda.png)
+
+![](/home/eagle/d/myapp/milanocyclelane/docs/img3-leggenda.png)
+
+Tramite il pulsante è possibile vedere sia sulla mappa che su street view la ciclabile più vicina
+
+su street view la ciclabile più vicina è rappresentata dall'icona rossa mentre la tua posizione dall'icona gialla.
+
+![](/home/eagle/d/myapp/milanocyclelane/docs/img4-leggenda.png)
+
+![](/home/eagle/d/myapp/milanocyclelane/docs/img5-leggenda.png)
+
 ##### Il logo
 
-
-
 ![Logo](icon256.png)
-
-
 
 ## api & data
 
@@ -19,10 +31,10 @@
 - maps js library: https://leafletjs.com/
 - maps: https://www.openstreetmap.org/
 
-## example
+## license e crediti
 
-- get images near coordinates https://a.mapillary.com/v3/images?client_id=aHltWFR4Njk0MmR5RHlxMHVrajM0Yzo0NmNmN2QyZGU4ZTliODMz&closeto=9.190428,45.496784
+mappa e geocoding "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
 
-## license
+street view: https://www.mapillary.com/
 
-"Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+routing service: https://www.mapbox.com/
