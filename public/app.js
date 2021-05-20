@@ -319,6 +319,7 @@ async function manage_route() {
     if (!route) {
         create_route(waypoints);
         route.addTo(leaflet_map);
+        manage_menu();
     }
     else {
         route.addTo(leaflet_map);
@@ -678,12 +679,14 @@ function managemapillaryviewer(position_coord, lane_coord) {
     if (hideorshowmapillary===1) {
         hideViewer();
         hideorshowmapillary = 0;
-        document.querySelector("#near_cycle > button").innerText = "visualizza ciclabile più vicina"
+        document.querySelector("#near_cycle > button").innerText = "visualizza ciclabile più vicina";
+        manage_menu();
     }
     else {
         showViewer(position_coord, lane_coord);
-        hideorshowmapillary = 1
-        document.querySelector("#near_cycle > button").innerText = "nascondi ciclabile più vicina"
+        hideorshowmapillary = 1;
+        document.querySelector("#near_cycle > button").innerText = "nascondi ciclabile più vicina";
+        manage_menu();
     }
 }
 
@@ -730,6 +733,13 @@ async function start_whatchposition() {
       navigator.geolocation.watchPosition(success, error, options);
           
 }
+async function append_legend() {
+    document.querySelector("#graph-root").innerHTML += `
+    <div class="map-legend" id="map-legend">
+    <p><i></i> ciclabili</p>
+    </div>
+    `
+} 
 async function append_footer() {
     document.querySelector("#root").innerHTML += `
     <div class="footer">
@@ -762,17 +772,18 @@ async function main() {
     L.geoJSON(l_geojson).addTo(leaflet_map)
     let current_pos = await get_user_position();
     if (!current_pos.error) {
-        marker_state.position.is_possible = true
+        marker_state.position.is_possible = true;
         marker_state.position.coordinates = [current_pos.latitude.toString(), current_pos.longitude.toString()]
         marker_state.position.marker = L.marker(marker_state.position.coordinates, {icon: redIcon}).addTo(leaflet_map);
         marker_state.position.marker.bindPopup(`<b>la tua posizione</b>`)
         start_whatchposition();
-    }
+    };
+    append_legend();
     add_graphic_element();
     search();
     get_near_cyclable(l_geojson);   
     append_footer();
-    root.querySelector("#loading").remove()
+    root.querySelector("#loading").remove();
     
 }
 main();
