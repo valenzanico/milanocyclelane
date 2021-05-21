@@ -30,6 +30,15 @@ su street view la ciclabile più vicina è rappresentata dall'icona rossa mentre
 - street view api: https://www.mapillary.com/developer
 - maps js library: https://leafletjs.com/
 - maps: https://www.openstreetmap.org/
+- directions api: https://docs.mapbox.com/api/navigation/directions/
+
+righe di codice scritte: 1673
+
+righe di codice effettive: 1230
+
+
+
+
 
 ## license e crediti
 
