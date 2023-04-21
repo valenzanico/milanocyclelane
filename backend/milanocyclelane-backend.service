@@ -1,0 +1,13 @@
+[Unit]
+Description=Nodejs backend for milanocyclelane website
+After=network-online.target
+
+[Service]
+User=root
+WorkingDirectory=/root/milanocyclelane
+ExecStart=/snap/bin/node /root/milanocyclelane/backend/app.js
+Restart=always
+Environment=NODE_PORT_MCL=45234
+
+[Install]
+WantedBy=multi-user.target
