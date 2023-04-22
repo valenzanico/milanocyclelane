@@ -600,7 +600,7 @@ async function getNear(mycord, json_obj) {
 
 function initMapillary() {
     mly = new Mapillary.Viewer({
-        apiClient: 'QjI1NnU0aG5FZFZISE56U3R5aWN4Zzo3NTM1MjI5MmRjODZlMzc0',
+        apiClient: 'MLY|5994274650684119|6ea414a1693c80861e8166ae074e2d9d',
         component: {
             cover: false,
             marker: true,
