@@ -630,7 +630,7 @@ function addMarker(position, lane) {
 
 function movetopoint(position, lane) {
     let keytomove;
-    fetch(`https://a.mapillary.com/v3/images?client_id=aHltWFR4Njk0MmR5RHlxMHVrajM0Yzo0NmNmN2QyZGU4ZTliODMz&closeto=${position[0]},${position[1]}&lookat=${lane[0]},${lane[1]}`)
+    fetch(`https://a.mapillary.com/v3/images?client_id=5994274650684119&closeto=${position[0]},${position[1]}&lookat=${lane[0]},${lane[1]}`)
         .then(data => data.json())
         .then(json => {
             keytomove = json["features"][0]["properties"]["key"]
